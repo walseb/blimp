@@ -1,0 +1,39 @@
+* Blimp
+Blimp is a complete wrapper around imagemagick with autocompletion and hints for emacs using eimp.el to execute the commands
+
+[[file:screenshot.png][Blimp command building]]
+
+** Install
+A copy of eimp.el is included with blimp.el
+#+BEGIN_SRC emacs-lisp
+  (require 'blimp)
+  (add-hook 'image-mode-hook 'eimp-mode)
+#+END_SRC
+
+If you don't wan't to open the blimp-interface with =M-x blimp-interface= you can bind all blimp commands to keys like this
+#+BEGIN_SRC emacs-lisp
+  (define-key eimp-mode (kbd "C-c C-i") 'blimp-interface)
+  (define-key eimp-mode (kbd "C-c C-I") 'blimp-interface-execute)
+  (define-key eimp-mode (kbd "C-c C-x") 'blimp-execute-command-stack)
+  (define-key eimp-mode (kbd "C-c C-p") 'blimp-toggle-prefix)
+  (define-key eimp-mode (kbd "C-c C-c") 'blimp-clear-command-stack)
+#+END_SRC
+
+Or if you wan't to skip using the interface and have hotkeys for specific commands you can do
+#+BEGIN_SRC emacs-lisp
+  (defun my/blimp-rotate()
+    (interactive)
+    (blimp-interface-execute "rotate"))
+
+  (define-key eimp-mode (kbd "C-c C-r") 'my/blimp-rotate)
+#+END_SRC
+
+Or if you wan't to run commands with all their paramaters already set
+#+BEGIN_SRC emacs-lisp
+  (defun my/blimp-rotate-90()
+    (interactive)
+    (blimp-add-to-command-stack (list "-rotate" "90"))
+    (blimp-execute-command-stack))
+
+  (define-key eimp-mode (kbd "C-c C-r") 'my/blimp-rotate-90)
+#+END_SRC

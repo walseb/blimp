@@ -1,9 +1,7 @@
 * Blimp
 Blimp is a complete wrapper around imagemagick with autocompletion and hints for emacs using eimp.el to execute the commands
 
-#+BEGIN_EXPORT html
-<img src="screenshot.png" alt="Blimp command building"/>
-#+END_EXPORT
+#+html: <img src="screenshot.png" alt="Blimp command building"/>
 
 ** Install
 A copy of eimp.el is included with blimp.el

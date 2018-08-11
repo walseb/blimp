@@ -341,7 +341,6 @@ Otherwise toggle between command prefixes."
 (defun blimp-clear-command-stack ()
   "Remove all unexecuted commands."
   (interactive)
-  (eimp-mogrify-image blimp-command-stack)
   (setq blimp-command-stack nil))
 
 ;;;###autoload
@@ -359,7 +358,8 @@ Also removes all unexecuted commands after executing them."
 For use when choosing which command to execute in blimp-interface."
   (delete nil (mapcar (lambda (command-data-entry)
 			(interactive)
-			(aref command-data-entry 0)) blimp-commands)))
+			(aref command-data-entry 0))
+		      blimp-commands)))
 
 (defun blimp-get-command-entry-data (command)
   "Gets the data entry for COMMAND.

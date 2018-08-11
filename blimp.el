@@ -349,8 +349,10 @@ Otherwise toggle between command prefixes."
   "Execute all unexecuted commands.
 Also removes all unexecuted commands after executing them."
   (interactive)
-  (eimp-mogrify-image blimp-command-stack)
-  (blimp-clear-command-stack))
+  (if blimp-command-stack
+      (progn
+	(eimp-mogrify-image blimp-command-stack)
+	(blimp-clear-command-stack))))
 
 (defun blimp-get-all-commands ()
   "Get all commands.

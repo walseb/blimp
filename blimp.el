@@ -489,7 +489,10 @@ Command types can be a method, property, etc."
   "Completing read wrapper with correct formating."
   (completing-read (concat "(" blimp-current-prefix " prefix) " command " - " argument " : "
 			   (if (and input-format (not (string-empty-p input-format)))
-			       (concat "(format: " input-format ") ")) "(info: " description ") ")
+			       (concat "(format: " input-format ") "))
+			   "(info: " description ") "
+			   (if blimp-command-stack
+			       (concat  "(Commands: " (string-join blimp-command-stack " ") ") ")))
 		   collection))
 
 (defun blimp-type-completing-read (command argument description)

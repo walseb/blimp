@@ -444,6 +444,15 @@ If COMMAND is nil, prompt user for which command should be executed."
        (blimp-read-command command)
      (blimp-read-command (completing-read "Choose command: " (blimp-get-all-commands))))))
 
+;;;###autoload
+(defun blimp-interface-execute (&optional command)
+  "Prompt user for arguments of COMMAND if any and add to command stack.
+If COMMAND is nil, prompt user for which command should be executed.
+COMMAND will be executed instantly."
+  (interactive)
+  (blimp-interface command)
+  (blimp-execute-command-stack))
+
 (defun blimp-command-type-exceptions (command)
   "Get types by COMMAND.
 These are manually added types for when the imagemagick documentation is bad."

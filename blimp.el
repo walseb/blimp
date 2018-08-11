@@ -23,6 +23,9 @@
 ;; around all possible imagemagick mogrify commands with a lot of
 ;; commands also having autocompletion and hints
 ;;
+
+;;; Usage:
+;;
 ;; Switch the eimp minor mode on programmatically with:
 ;;
 ;;     (eimp-mode 1)

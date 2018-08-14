@@ -4,6 +4,8 @@
 
 ;; Author: Matthew P. Hodges <MPHodges@member.fsf.org>
 ;; Version: 1.4.0
+;; Keywords: multimedia, unix
+;; URL: http://mph-emacs-pkgs.alioth.debian.org/EimpEl.html
 
 ;; eimp.el is free software; you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by
@@ -33,6 +35,7 @@
 ;;     (add-hook 'image-mode-hook 'eimp-mode)
 
 ;;; Code:
+(require 'image-mode)
 
 (defconst eimp-version "1.4.0"
   "Version number of this package.")

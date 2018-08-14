@@ -1,9 +1,10 @@
 ;;; blimp.el --- Bustling Image Manipulation Package
 
 ;; Author: Sebastian Wålinder <s.walinder@gmail.com>
+;; URL: https://github.com/walseb/blimp
 ;; Version: 1.0
-;; Package-Requires: ((eimp "1.4.0"))
-;; Keywords: imagemagick, image manipulation
+;; Package-Requires: ((emacs "25") (eimp "1.4.0"))
+;; Keywords: multimedia, unix
 
 ;; blimp.el is free software; you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by
@@ -363,7 +364,7 @@ Also removes all unexecuted commands after executing them."
 
 (defun blimp-get-all-commands ()
   "Get all commands.
-For use when choosing which command to execute in blimp-interface."
+For use when choosing which command to execute in `blimp-interface'."
   (delete nil (mapcar (lambda (command-data-entry)
 			(interactive)
 			(aref command-data-entry 0))
@@ -496,7 +497,7 @@ Command types can be a method, property, etc."
 	    result))))))
 
 (defun blimp-add-to-command-stack (values)
-  "Add list VALUES to the end of blimp-command-stack."
+  "Add list VALUES to the end of `blimp-command-stack'."
   (if (not blimp-command-stack)
       (progn
 	(push (car values) blimp-command-stack)

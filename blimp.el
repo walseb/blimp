@@ -1,4 +1,4 @@
-;;; blimp.el --- Bustling Image Manipulation Package
+;;; blimp.el --- Bustling Image Manipulation Package -*- lexical-binding: t -*-
 
 ;; Author: Sebastian Wålinder <s.walinder@gmail.com>
 ;; URL: https://github.com/walseb/blimp

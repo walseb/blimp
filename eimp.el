@@ -1,11 +1,12 @@
-;;; eimp.el --- Emacs Image Manipulation Package
+;;; eimp.el --- Emacs Image Manipulation Package -*- lexical-binding: t -*-
 
 ;;; Copyright (C) 2006, 2007 Matthew P. Hodges
 
 ;; Author: Matthew P. Hodges <MPHodges@member.fsf.org>
-;; Version: 1.4.0
-;; Keywords: multimedia, unix
 ;; URL: http://mph-emacs-pkgs.alioth.debian.org/EimpEl.html
+;; Version: 1.4.0
+;; Package-Requires: ((emacs "24"))
+;; Keywords: multimedia, unix
 
 ;; eimp.el is free software; you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by
@@ -216,9 +217,9 @@ operations act sequentially on any given image."
     (setq eimp-mode-string " EIMP"))
   (if (and eimp-mode (eq major-mode 'image-mode))
       (progn
-        (add-hook 'write-contents-functions 'eimp-update-buffer-contents nil t)
+        (add-hook 'write-contents-functions #'eimp-update-buffer-contents nil t)
         (set (make-local-variable 'require-final-newline) nil))
-    (remove-hook 'write-contents-functions 'eimp-update-buffer-contents t))
+    (remove-hook 'write-contents-functions #'eimp-update-buffer-contents t))
   (when (and (fboundp 'easy-menu-add)
              eimp-menu)
     (easy-menu-add eimp-menu)))

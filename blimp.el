@@ -1,8 +1,9 @@
 ;;; blimp.el --- Bustling Image Manipulation Package
 
 ;; Author: Sebastian Wålinder <s.walinder@gmail.com>
-;; Package-Requires: ((eimp "1.4.0"))
 ;; Version: 1.0
+;; Package-Requires: ((eimp "1.4.0"))
+;; Keywords: imagemagick, image manipulation
 
 ;; blimp.el is free software; you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by
@@ -34,7 +35,6 @@
 ;;
 ;; Switch the minor mode on for all image-mode buffers with:
 ;;
-;;     (autoload 'eimp-mode "eimp" "Emacs Image Manipulation Package." t)
 ;;     (add-hook 'image-mode-hook 'eimp-mode)
 ;;
 ;; Then once eimp-mode is enabled, call
@@ -57,6 +57,22 @@
 ;;; Code:
 
 (require 'eimp)
+
+(defgroup blimp nil
+  "Bustling Image Manipulation Package."
+  :group 'tools
+  :link '(url-link "https://github.com/walseb/blimp"))
+
+(defcustom blimp-tutorial t
+  "Places (long) helpful examples in some prompts."
+  :group 'blimp
+  :type 'boolean)
+
+(defvar blimp-command-stack (list)
+  "List of unexecuted commands.")
+
+(defvar blimp-current-prefix "-"
+  "The current command prefix.")
 
 (defconst blimp-commands
   [
@@ -316,17 +332,6 @@
    ["swap" "indexes"        "swap two images in the image sequence"]
    ])
 
-(defcustom blimp-tutorial t
-  "Places (long) helpful examples in some prompts."
-  :group 'blimp
-  :type 'boolean)
-
-(defvar blimp-command-stack (list)
-  "List of unexecuted commands.")
-
-(defvar blimp-current-prefix "-"
-  "The current command prefix.")
-
 ;;;###autoload
 (defun blimp-toggle-prefix (&optional arg)
   "Toggle the command prefix.
@@ -427,13 +432,18 @@ Returns results if input is legitimate."
 			   command-data
 			 (blimp-get-command-entry-data command))))
     (if command-data
+	;; Get COMMAND from car of blimp-commands, and remove nils
 	(delete nil (mapcar
 		     (lambda (current-data-entry) (interactive)
-		       (let* ((current-position (position current-data-entry command-data)))
+		       (let* ((current-position
+			       (position current-data-entry command-data)))
 			 (if (= current-position 0)
 			     (concat blimp-current-prefix current-data-entry)
-			   (if (not (= current-position (- (length command-data) 1)))
-			       (blimp-prompt-for-arguments command current-data-entry (aref command-data (- (length command-data) 1)))))))
+			   (if (not (= current-position
+				       (- (length command-data) 1)))
+			       (blimp-prompt-for-arguments
+				command current-data-entry
+				(aref command-data (- (length command-data) 1)))))))
 		     command-data))
       (error "Error: Command does not exist"))))
 
@@ -445,7 +455,8 @@ If COMMAND is nil, prompt user for which command should be executed."
   (blimp-add-to-command-stack
    (if command
        (blimp-read-command command)
-     (blimp-read-command (completing-read "Choose command: " (blimp-get-all-commands))))))
+     (blimp-read-command
+      (completing-read "Choose command: " (blimp-get-all-commands))))))
 
 ;;;###autoload
 (defun blimp-interface-execute (&optional command)
@@ -460,9 +471,14 @@ COMMAND will be executed instantly."
   "Get types by COMMAND.
 These are manually added types for when the imagemagick documentation is bad."
   (pcase command
-    ("limit" (list "width" "height" "area" "memory" "map" "disk" "file" "thread" "throttle" "time"))
-    ("font" (delete "Font:" (blimp-get-command-type-list (concat command " | grep Font:"))))
-    ("ordered-dither" (list "threshold" "checks" "o2x2" "o3x3" "o4x4" "o8x8" "h3x4a" "h6x6a" "h8x8a" "h3x4o" "h6x6o" "h8x8o" "h36x16o" "c5x5b" "c5x5w" "c6x6b" "c6x6w" "c7x7b" "c7x7w"))
+    ("limit" (list "width" "height" "area" "memory" "map" "disk" "file" "thread"
+		   "throttle" "time"))
+    ("font" (delete "Font:" (blimp-get-command-type-list
+			     (concat command " | grep Font:"))))
+    ("ordered-dither"
+     (list "threshold" "checks" "o2x2" "o3x3" "o4x4" "o8x8" "h3x4a" "h6x6a"
+	   "h8x8a" "h3x4o" "h6x6o" "h8x8o" "h36x16o" "c5x5b" "c5x5w" "c6x6b"
+	   "c6x6w" "c7x7b" "c7x7w"))
     ;; Incomplete
     ("property" (list "comment" "origsize" "profile"))))
 
@@ -485,35 +501,55 @@ Command types can be a method, property, etc."
       (progn
 	(push (car values) blimp-command-stack)
 	(setq values (delete (car values) values))))
-  (mapc #'(lambda (arg) (interactive) (push arg (cdr (last blimp-command-stack)))) values))
+  (mapc #'(lambda (arg) (interactive)
+	    (push arg (cdr (last blimp-command-stack))))
+	values))
 
-;; Completing reads
+;;* `Completing reads'
 (defun blimp-completing-read (command argument collection input-format description)
-  "Completing read wrapper with correct formating."
-  (completing-read (concat "(" blimp-current-prefix " prefix) " command " - " argument " : "
-			   (if (and input-format (not (string-empty-p input-format)))
-			       (concat "(format: " input-format ") "))
-			   "(info: " description ") "
-			   (if blimp-command-stack
-			       (concat  "(Commands: " (string-join blimp-command-stack " ") ") ")))
-		   collection))
+  "Completing read wrapper with correct formating.
+It formats COMMAND, ARGUMENT, INPUT-FORMAT
+and DESCRIPTION and puts it in the prompt.
+COLLECTION is added as autocompletion entries."
+  (completing-read
+   (concat "(" blimp-current-prefix " prefix) " command " - " argument " : "
+	   (if (and input-format (not (string-empty-p input-format)))
+	       (concat "(format: " input-format ") "))
+	   "(info: " description ") "
+	   (if blimp-command-stack
+	       (concat  "(Commands: "
+			(string-join blimp-command-stack " ") ") ")))
+   collection))
 
 (defun blimp-type-completing-read (command argument description)
   "Completing read for types.
-Types in blimp are the result of doing `magick -list COMMAND'."
+Types in blimp are the result of doing `magick -list COMMAND'
+in a shell and then formatting it.
+It formats COMMAND, ARGUMENT, and DESCRIPTION and puts it in the prompt."
   (let* ((command-type-data (blimp-get-command-type-list command)))
     (if command-type-data
-	(blimp-completing-read command argument command-type-data nil description)
-      (blimp-completing-read command argument nil "Missing autocomplete" description))))
+	(blimp-completing-read command
+			       argument command-type-data nil description)
+      (blimp-completing-read command argument nil "Missing autocomplete"
+			     description))))
 
-(defun blimp-number-completing-read (command argument format description &optional percentage-result)
-  "Completing read with some basic checks for numbers.
-If PERCENTAGE-RESULT is non-nil, add a % sign at the end if none are supplied"
-  (let* ((new-format (concat format (if percentage-result " (% auto added if not supplied)" nil))))
-    (let* ((input-text (blimp-completing-read command argument nil new-format description)))
+(defun blimp-number-completing-read (command argument input-format description &optional percentage-result)
+  "Completing read with some basic check for numbers.
+If PERCENTAGE-RESULT is non-nil, add a % sign at the end if none are supplied
+It formats COMMAND, ARGUMENT, INPUT-FORMAT
+and DESCRIPTION and puts it in the prompt.
+If PERCENTAGE-RESULT is non-nil, add a percentage
+mark at the end of the user input and inform the user of this."
+  (let* ((new-format (concat input-format
+			     (if percentage-result
+				 " (% auto added if not supplied)"
+			       nil))))
+    (let* ((input-text
+	    (blimp-completing-read command argument nil new-format
+				   description)))
       ;; Accept "x" as an argument separator
       (if (or (string-match-p "[:a-v:]" input-text)
-	     (string-match-p "[:y-z:]" input-text))
+	      (string-match-p "[:y-z:]" input-text))
 	  (error "Error: Input wasn't a number")
 	(if percentage-result
 	    (progn
@@ -522,39 +558,64 @@ If PERCENTAGE-RESULT is non-nil, add a % sign at the end if none are supplied"
 		(concat input-text "%")))
 	  input-text)))))
 
-(defun blimp-point-completing-read (command argument format description)
-  "Completing read with some basic checks for points."
-  (let* ((point (blimp-number-completing-read command argument format description)))
+(defun blimp-point-completing-read (command argument input-format description)
+  "Completing read with some basic check for points.
+It formats COMMAND, ARGUMENT, INPUT-FORMAT
+and DESCRIPTION and puts it in the prompt."
+  (let* ((point
+	  (blimp-number-completing-read command argument input-format
+					description)))
     (if (string-match-p ".\\(\\,\\)." point)
 	point
       (error "Error: Input does not follow format x,y. Example: 100,200"))))
 
 (defun blimp-geometry-completing-read (command argument description)
-  "Completing read with some hints on which format is relevant."
-  (let* ((format (if blimp-tutorial
-		     "1x1! & 1x1^ = preserve & ignore aspect ratio, 9@ = 9 pixel area, 4:3~ = 4:3 aspect ratio, +10+20 = offset by 10x20y"
-		   "x,y or 9@ or 4:3 or +10+20 etc")))
-    (let* ((collection (if blimp-tutorial (list "100" "100x200" "200" "50%" "50x10%" "x10%") nil)))
+  "Completing read with some hints on which format is relevant.
+It formats COMMAND, ARGUMENT,and DESCRIPTION
+and puts it in the prompt."
+  (let* ((format
+	  (if blimp-tutorial
+	      "1x1! & 1x1^ = preserve & ignore aspect ratio, 9@ = 9 pixel area, 4:3~ = 4:3 aspect ratio, +10+20 = offset by 10x20y"
+	    "x,y or 9@ or 4:3 or +10+20 etc")))
+    (let* ((collection
+	    (if blimp-tutorial
+		(list "100" "100x200" "200" "50%" "50x10%" "x10%") nil)))
       (blimp-completing-read command argument collection format description))))
 
 (defun blimp-find-file-completing-read (command argument description)
-  "Read-file-name wrapper with correct formating."
-  (let* ((file (read-file-name (concat "(" blimp-current-prefix " prefix) " command "- " argument " (info: " description ") ") default-directory)))
+  "Read-file-name wrapper with correct formating.
+It formats COMMAND, ARGUMENT,and DESCRIPTION
+and puts it in the prompt."
+  (let* ((file (read-file-name
+		(concat "(" blimp-current-prefix " prefix) " command "- "
+			argument " (info: " description ") ")
+		default-directory)))
     (if (and (file-exists-p file) (not (directory-name-p file)))
 	file
       nil)))
 
 (defun blimp-color-completing-read (command argument description)
-  "Completing read with some hints on which format is relevant."
-  (blimp-completing-read command argument nil "blue or #aabbcc or rgb(255,255,255)" description))
+  "Completing read with some hints on which format is relevant.
+It formats COMMAND, ARGUMENT,and DESCRIPTION
+and puts it in the prompt."
+  (blimp-completing-read command argument nil
+			 "blue or #aabbcc or rgb(255,255,255)" description))
 
 (defun blimp-radius-sigma-completing-read (command argument collection description &optional both-radius-and-sigma)
-  "Completing read with some basic checks for radius (and sigma).
-If BOTH-RADIUS-AND-SIGMA is non-nil, prompt the user for both radius and sigma."
-  (let* ((input-text (blimp-completing-read command argument nil (concat "5 (radius)" (if both-radius-and-sigma "or 5,9 (radius,sigma)")) description)))
+  "Completing read with some basic check for radius (and sigma).
+If BOTH-RADIUS-AND-SIGMA is non-nil, prompt the user for both radius and sigma.
+It formats COMMAND, ARGUMENT,and DESCRIPTION and puts it in the prompt.
+COLLECTION is added as autocompletion entries.
+If BOTH-RADIUS-AND-SIGMA is non-nil, prompt usere for both radius and sigma"
+  (let* ((input-text
+	  (blimp-completing-read
+	   command argument nil
+	   (concat "5 (radius)"
+		   (if both-radius-and-sigma "or 5,9 (radius,sigma)"))
+	   description)))
     ;; Do a simple check for letters that aren't x
     (if (or (string-match-p "[:a-v:]" input-text)
-	   (string-match-p "[:y-z:]" input-text))
+	    (string-match-p "[:y-z:]" input-text))
 	(error "Error: Input does not follow format x,y. Example: 100,200")
       input-text)))
 

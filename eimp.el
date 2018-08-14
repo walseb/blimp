@@ -3,7 +3,7 @@
 ;;; Copyright (C) 2006, 2007 Matthew P. Hodges
 
 ;; Author: Matthew P. Hodges <MPHodges@member.fsf.org>
-;; Version: $Id: eimp.el,v 1.113 2008-07-16 10:15:56 mphodges-guest Exp $
+;; Version: 1.4.0
 
 ;; eimp.el is free software; you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by

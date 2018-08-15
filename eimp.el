@@ -1,4 +1,4 @@
-;;; eimp.el --- Emacs Image Manipulation Package -*- lexical-binding: t -*-
+;;; eimp.el --- Emacs Image Manipulation Package (Core version) -*- lexical-binding: t -*-
 
 ;;; Copyright (C) 2006, 2007 Matthew P. Hodges
 
@@ -23,6 +23,9 @@
 ;; This package allows interactive image manipulation from within
 ;; Emacs.  It uses the mogrify utility from ImageMagick to do the
 ;; actual transformations.
+;;
+;; This is the core version of eimp.el, which is eimp.el with features
+;; provided by the package blimp removed
 ;;
 ;; Switch the minor mode on programmatically with:
 ;;
@@ -80,31 +83,6 @@ operations act sequentially on any given image."
   :group 'eimp
   :type 'integer)
 
-(defcustom eimp-blur-amount 10
-  "Default argument for blur commands."
-  :group 'eimp
-  :type 'integer)
-
-(defcustom eimp-brightness-amount 10
-  "Default argument for brightness commands."
-  :group 'eimp
-  :type 'integer)
-
-(defcustom eimp-roll-amount 50
-  "Default number of pixels to shift for roll commands."
-  :group 'eimp
-  :type 'integer)
-
-(defcustom eimp-rotate-amount 90
-  "Default argument for rotate commands."
-  :group 'eimp
-  :type 'integer)
-
-(defcustom eimp-resize-amount 150
-  "Default argument for resize commands."
-  :group 'eimp
-  :type 'integer)
-
 (defcustom eimp-ignore-read-only-modes '(gnus-article-mode
                                          puzzle-mode
                                          tumme-display-image-mode
@@ -120,90 +98,6 @@ operations act sequentially on any given image."
   :type 'boolean)
 
 ;; Mode settings
-
-(defvar eimp-minor-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "+") 'eimp-increase-image-size)
-    (define-key map (kbd "-") 'eimp-decrease-image-size)
-    (define-key map (kbd "<") 'eimp-rotate-image-anticlockwise)
-    (define-key map (kbd ">") 'eimp-rotate-image-clockwise)
-    (define-key map (kbd "B +") 'eimp-blur-image)
-    (define-key map (kbd "B -") 'eimp-sharpen-image)
-    (define-key map (kbd "B E") 'eimp-emboss-image)
-    (define-key map (kbd "B G") 'eimp-gaussian-blur-image)
-    (define-key map (kbd "B R") 'eimp-radial-blur-image)
-    (define-key map (kbd "C B +") 'eimp-increase-image-brightness)
-    (define-key map (kbd "C B -") 'eimp-decrease-image-brightness)
-    (define-key map (kbd "C C +") 'eimp-increase-image-contrast)
-    (define-key map (kbd "C C -") 'eimp-decrease-image-contrast)
-    (define-key map (kbd "F ^") 'eimp-flip-image)
-    (define-key map (kbd "F >") 'eimp-flop-image)
-    (define-key map (kbd "F <") 'eimp-flop-image)
-    (define-key map (kbd "N") 'eimp-negate-image)
-    (define-key map (kbd "S f") 'eimp-fit-image-to-window)
-    (define-key map (kbd "S h") 'eimp-fit-image-height-to-window)
-    (define-key map (kbd "S w") 'eimp-fit-image-width-to-window)
-    (define-key map (kbd "<right>") 'eimp-roll-image-right)
-    (define-key map (kbd "<left>") 'eimp-roll-image-left)
-    (define-key map (kbd "<up>") 'eimp-roll-image-up)
-    (define-key map (kbd "<down>") 'eimp-roll-image-down)
-    (define-key map (kbd "<down-mouse-1>") 'eimp-mouse-resize-image)
-    (define-key map (kbd "<S-down-mouse-1>") 'eimp-mouse-resize-image-preserve-aspect)
-    (define-key map (kbd "C-c C-k") 'eimp-stop-all)
-    map)
-  "Keymap for Eimp mode.")
-
-;; Menus
-
-(defvar eimp-menu nil
-  "Menu to use for function `eimp-mode'.")
-
-(when (fboundp 'easy-menu-define)
-  (easy-menu-define eimp-menu eimp-minor-mode-map "EIMP Menu"
-    '("EIMP"
-      ("Transforms"
-       ["Increase Size"         eimp-increase-image-size t]
-       ["Decrease Size"         eimp-decrease-image-size t]
-       ["Fit to Window (keep aspect ratio)"      eimp-fit-image-to-window t]
-       ["Fit to Window"         eimp-fit-image-to-whole-window t]
-       ["Fit Height to Window"  eimp-fit-image-height-to-window t]
-       ["Fit Width to Window"   eimp-fit-image-width-to-window t]
-       "---"
-       ["Flip Horizontally"     eimp-flop-image t]
-       ["Flip Vertically"       eimp-flip-image t]
-       "---"
-       ["Rotate Clockwise"      eimp-rotate-image-clockwise t]
-       ["Rotate Anticlockwise"  eimp-rotate-image-anticlockwise t]
-       "---"
-       ["Roll Right"            eimp-roll-image-right t]
-       ["Roll Left"             eimp-roll-image-left t]
-       ["Roll Up"               eimp-roll-image-up t]
-       ["Roll Down"             eimp-roll-image-down t])
-
-      ("Colours"
-       ("Brightness"
-        ["Increase"      eimp-increase-image-brightness t]
-        ["Decrease"      eimp-decrease-image-brightness t])
-       ("Contrast"
-        ["Increase"      eimp-increase-image-contrast t]
-        ["Decrease"      eimp-decrease-image-contrast t])
-       "---"
-       ["Invert"      eimp-negate-image t])
-      
-      ("Filters"
-       ("Blur Image"
-        ["Blur Image" eimp-blur-image t]
-        ["Blur Image (Gaussian)" eimp-gaussian-blur-image t]
-        ["Blur Image (Radial)" eimp-radial-blur-image t])
-
-       ("Enhance Image"
-        ["Sharpen Image" eimp-sharpen-image t])
-
-       ("Distort Image"
-        ["Emboss Image" eimp-emboss-image t]))
-
-      ("Processes"
-       ["Kill All" eimp-stop-all t]))))
 
 (defvar eimp-mode-string " EIMP"
   "String used to indicate EIMP status in mode line.")
@@ -671,24 +565,6 @@ Delete process if it doesn't"
     nil))
 
 ;;;###autoload
-(defun eimp-negate-image ()
-  "Negate image."
-  (interactive)
-  (eimp-mogrify-image (list "-negate")))
-
-;;;###autoload
-(defun eimp-increase-image-size (arg)
-  "Increase image size by ARG or default `eimp-resize-amount'."
-  (interactive "P")
-  (eimp-mogrify-image (list "-resize" (format "%d%%" (or arg eimp-resize-amount)))))
-
-;;;###autoload
-(defun eimp-decrease-image-size (arg)
-  "Decrease image size by ARG or default `eimp-resize-amount'."
-  (interactive "P")
-  (eimp-mogrify-image (list "-resize" (format "%d%%" (* 100 (/ 100.0 (or arg eimp-resize-amount)))))))
-
-;;;###autoload
 (defun eimp-fit-image-to-window (arg)
   "Scale image to fit in the current window.
 With a prefix arg, ARG, don't preserve the aspect ratio."
@@ -821,115 +697,6 @@ preserve the aspect ratio."
     (cons (+ (car x-y) (car edges))
           (+ (cdr x-y) (cadr edges)))))
 
-(defun eimp-blur-image (arg)
-  "Blur image by ARG or default `eimp-blur-amount'."
-  (interactive "P")
-  (eimp-mogrify-image (list "-blur" (format "%d" (or arg eimp-blur-amount)))))
-
-;;;###autoload
-(defun eimp-sharpen-image (arg)
-  "Sharpen image by ARG or default `eimp-blur-amount'."
-  (interactive "P")
-  (eimp-mogrify-image (list "-sharpen" (format "%d" (or arg eimp-blur-amount)))))
-
-;;;###autoload
-(defun eimp-emboss-image (arg)
-  "Emboss image by ARG or default `eimp-blur-amount'."
-  (interactive "P")
-  (eimp-mogrify-image (list "-emboss" (format "%d" (or arg eimp-blur-amount)))))
-
-;;;###autoload
-(defun eimp-gaussian-blur-image (arg)
-  "Gaussian blur image by ARG or default `eimp-blur-amount'."
-  (interactive "P")
-  (eimp-mogrify-image (list "-gaussian" (format "%d" (or arg eimp-blur-amount)))))
-
-;;;###autoload
-(defun eimp-radial-blur-image (arg)
-  "Radial blur image by ARG or default `eimp-blur-amount'."
-  (interactive "P")
-  (eimp-mogrify-image (list "-radial-blur" (format "%d" (or arg eimp-blur-amount)))))
-
-;;;###autoload
-(defun eimp-flip-image ()
-  "Flip image vertically."
-  (interactive)
-  (eimp-mogrify-image (list "-flip" )))
-
-;;;###autoload
-(defun eimp-flop-image ()
-  "Flip image horizontally."
-  (interactive)
-  (eimp-mogrify-image (list "-flop")))
-
-;;;###autoload
-(defun eimp-rotate-image-clockwise (arg)
-  "Rotate image clockwise by ARG or default `eimp-rotate-amount'."
-  (interactive "P")
-  (eimp-mogrify-image (list "-rotate" (format "%d" (or arg eimp-rotate-amount)))))
-
-;;;###autoload
-(defun eimp-rotate-image-anticlockwise (arg)
-  "Rotate image anticlockwise by ARG or default `eimp-rotate-amount'."
-  (interactive "P")
-  (eimp-mogrify-image (list "-rotate" (format "-%d" (or arg eimp-rotate-amount)))))
-
-(defalias 'eimp-rotate-image-counterclockwise
-  'eimp-rotate-image-anticlockwise)
-(put 'eimp-rotate-image-counterclockwise 'function-documentation "Rotate image counterclockwise.")
-
-;;;###autoload
-(defun eimp-increase-image-brightness (arg)
-  "Increase image brightness by ARG or default `eimp-brightness-amount'."
-  (interactive "P")
-  (eimp-mogrify-image (list "-modulate" (format "%d" (+ 100 (or arg eimp-brightness-amount))))))
-
-;;;###autoload
-(defun eimp-decrease-image-brightness (arg)
-  "Decrease image brightness by ARG or default `eimp-brightness-amount'."
-  (interactive "P")
-  (eimp-mogrify-image (list "-modulate" (format "%d" (- 100 (or arg eimp-brightness-amount))))))
-
-;;;###autoload
-(defun eimp-increase-image-contrast ()
-  "Increase image contrast."
-  (interactive)
-  (eimp-mogrify-image (list "-contrast")))
-
-;;;###autoload
-(defun eimp-decrease-image-contrast ()
-  "Decrease image contrast."
-  (interactive)
-  (eimp-mogrify-image (list "+contrast")))
-
-;;;###autoload
-(defun eimp-roll-image-right (arg)
-  "Roll image right by ARG pixels."
-  (interactive "P")
-  (eimp-mogrify-image (list "-roll"
-                            (format "+%d-0" (or arg eimp-roll-amount)))))
-
-;;;###autoload
-(defun eimp-roll-image-left (arg)
-  "Roll image left by ARG pixels."
-  (interactive "P")
-  (eimp-mogrify-image (list "-roll"
-                            (format "-%d-0" (or arg eimp-roll-amount)))))
-
-;;;###autoload
-(defun eimp-roll-image-up (arg)
-  "Roll image up by ARG pixels."
-  (interactive "P")
-  (eimp-mogrify-image (list "-roll"
-                            (format "+0-%d" (or arg eimp-roll-amount)))))
-
-;;;###autoload
-(defun eimp-roll-image-down (arg)
-  "Roll image down by ARG pixels."
-  (interactive "P")
-  (eimp-mogrify-image (list "-roll"
-                            (format "+0+%d" (or arg eimp-roll-amount)))))
-
 (defun eimp-trace-all ()
   "Trace all `eimp' functions.  For debugging."
   (require 'trace)
@@ -937,9 +704,9 @@ preserve the aspect ratio."
     (buffer-disable-undo buffer)
     (all-completions "eimp" obarray
                      (lambda (sym)
-                       (and (fboundp sym)
+		       (and (fboundp sym)
                             (not (memq (car-safe (symbol-function sym))
-                                       '(autoload macro)))
+				       '(autoload macro)))
                             (trace-function-background sym buffer))))))
 (provide 'eimp)
 

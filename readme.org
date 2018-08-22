@@ -1,5 +1,5 @@
 * Blimp
-Blimp is a complete wrapper around imagemagick with autocompletion and hints for emacs using eimp.el to execute the commands
+Blimp is a complete wrapper around all imagemagick commands with descriptions, autocompletion (for some commands) and hints displayed in prompt
 
 #+html: <img src="screenshot.png" alt="Blimp command building example"/>
 

@@ -98,7 +98,6 @@ operations act sequentially on any given image."
   :type 'boolean)
 
 ;; Mode settings
-
 (defvar eimp-mode-string " EIMP"
   "String used to indicate EIMP status in mode line.")
 (make-variable-buffer-local 'eimp-mode-string)

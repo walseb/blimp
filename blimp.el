@@ -28,32 +28,27 @@
 
 ;;; Usage:
 ;;
-;; Switch the eimp minor mode on programmatically with:
+;; Switch the blimp minor mode on programmatically with:
 ;;
-;;     (eimp-mode 1)
+;;     (blimp-mode 1)
 ;;
-;; or toggle interactively with M-x eimp-mode RET.
+;; or toggle interactively with M-x blimp-mode RET.
 ;;
 ;; Switch the minor mode on for all image-mode buffers with:
 ;;
-;;     (add-hook 'image-mode-hook 'eimp-mode)
+;;     (add-hook 'image-mode-hook 'blimp-mode)
 ;;
-;; Then once eimp-mode is enabled, call
+;; Then once blimp-mode is enabled, do `M-x blimp-interface'
+;; to to add commands to be executed on the image.
 ;;
-;;     (blimp-interface)
+;; The added commands can be executed with `M-x blimp-execute-command-stack'
+;; and cleared with `M-x blimp-clear-command-stack'.
 ;;
-;; in order to add commands to be executed on the image.
-;; The added commands can be executed with
+;; If you want to execute the command right after selecting it
+;; you can do `M-x blimp-interface-execute'.
 ;;
-;;     (blimp-execute-command-stack)
-;;
-;; and cleared with
-;;
-;;     (blimp-clear-command-stack)
-;;
-;; The prefix of the command can also be changed with
-;;
-;;     (blimp-toggle-prefix)
+;; The prefix of the command can also be changed
+;; with `M-x blimp-toggle-prefix'.
 
 ;;; Code:
 
@@ -322,6 +317,30 @@
    ["reverse"               "reverse image sequence"]
    ["swap" "indexes"        "swap two images in the image sequence"]
    ])
+
+;; Mode settings
+(defvar blimp-minor-mode-map
+  (let ((map (make-keymap)))
+    (define-key map (kbd "C-c C-i") 'blimp-interface)
+    (define-key map (kbd "C-c C-I") 'blimp-interface-execute)
+    (define-key map (kbd "C-c C-x") 'blimp-execute-command-stack)
+    (define-key map (kbd "C-c C-p") 'blimp-toggle-prefix)
+    (define-key map (kbd "C-c C-c") 'blimp-clear-command-stack)
+    map)
+  "Keymap for blimp mode.")
+
+(defvar blimp-mode-string " BLIMP"
+  "Mode line indicator string.")
+(make-variable-buffer-local 'blimp-mode-string)
+
+;;;###autoload
+(define-minor-mode blimp-mode
+  "Toggle Blimp mode."
+  nil blimp-mode-string
+  (when blimp-mode
+    (setq blimp-mode-string " BLIMP"))
+  (if (not eimp-mode)
+      (eimp-mode)))
 
 ;;;###autoload
 (defun blimp-toggle-prefix (&optional arg)

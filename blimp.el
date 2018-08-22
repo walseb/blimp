@@ -58,7 +58,6 @@
 ;;; Code:
 
 (require 'eimp)
-(require 'cl)
 
 (defvar blimp-command-stack (list)
   "List of unexecuted commands.")
@@ -428,7 +427,7 @@ Returns results if input is legitimate."
 	(delete nil (mapcar
 		     (lambda (current-data-entry) (interactive)
 		       (let* ((current-position
-			       (position current-data-entry command-data)))
+			       (cl-position current-data-entry command-data)))
 			 (if (= current-position 0)
 			     (concat blimp-current-prefix current-data-entry)
 			   (if (not (= current-position
@@ -594,7 +593,7 @@ COLLECTION is added as autocompletion entries.
 If BOTH-RADIUS-AND-SIGMA is non-nil, prompt usere for both radius and sigma"
   (let* ((input-text
 	  (blimp-completing-read
-	   command argument nil
+	   command argument collection
 	   (concat "5 (radius)"
 		   (if both-radius-and-sigma "or 5,9 (radius,sigma)"))
 	   description)))

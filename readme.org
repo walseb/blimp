@@ -6,8 +6,8 @@ Blimp is a complete wrapper around imagemagick with autocompletion and hints for
 ** Features
 - Supports all imagemagick commands
 - Supports all completion frontends (ivy, helm, ido, etc)
-- Writes changes to buffer instead of file allowing for reverting changes
-- Autocomplete for some commands
+- Writes changes to buffer instead of file allowing you to revert changes before saving
+- Parameter autocomplete for some commands
 - Description of command in prompt
 - Description of input format for some commands
 

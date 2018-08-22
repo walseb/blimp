@@ -106,17 +106,14 @@ operations act sequentially on any given image."
 ;;;###autoload
 (define-minor-mode eimp-mode
   "Toggle Eimp mode."
-  nil eimp-mode-string eimp-minor-mode-map
+  nil eimp-mode-string
   (when eimp-mode
     (setq eimp-mode-string " EIMP"))
   (if (and eimp-mode (eq major-mode 'image-mode))
       (progn
         (add-hook 'write-contents-functions #'eimp-update-buffer-contents nil t)
         (set (make-local-variable 'require-final-newline) nil))
-    (remove-hook 'write-contents-functions #'eimp-update-buffer-contents t))
-  (when (and (fboundp 'easy-menu-add)
-             eimp-menu)
-    (easy-menu-add eimp-menu)))
+    (remove-hook 'write-contents-functions #'eimp-update-buffer-contents t)))
 
 ;; Variables
 
@@ -209,7 +206,7 @@ the image data."
             (when (and file (file-readable-p file))
               (with-temp-buffer
                 (insert-file-contents-literally file)
-                (string-as-unibyte (buffer-string)))))))))
+                (encode-coding-string (buffer-string)))))))))
 
 (defun eimp-mogrify-image (args)
   "Transform image, passing ARGS to mogrify."
@@ -291,7 +288,7 @@ string).  Return the process, if any."
                      (args (cadr (member 'proc-args eimp-data)))
                      (image-type (cadr (member 'image-type eimp-data))))
                 (with-temp-file temp-file
-                  (insert (string-to-multibyte image-data)))
+                  (insert (decode-coding-string image-data)))
                 (setq proc
                       (apply #'start-process id nil eimp-mogrify-program
                              ;; TODO: haven't understood why things
@@ -303,11 +300,11 @@ string).  Return the process, if any."
                 (set-process-filter proc #'eimp-mogrify-process-filter)
                 (set-process-sentinel proc #'eimp-mogrify-process-sentinel)
                 (eimp-save-buffer-state nil
-                  (put-text-property (point) (1+ (point)) 'eimp-proc
-                                     `(proc ,proc
-                                            image-type ,image-type
-                                            temp-file ,temp-file))
-                  (remove-text-properties (point) (1+ (point)) (list id))))))))))
+					(put-text-property (point) (1+ (point)) 'eimp-proc
+							   `(proc ,proc
+								  image-type ,image-type
+								  temp-file ,temp-file))
+					(remove-text-properties (point) (1+ (point)) (list id))))))))))
     proc))
 
 (defun eimp-check-for-zombie (posn)
@@ -514,14 +511,14 @@ Delete process if it doesn't"
                        'display
                        (create-image (with-temp-buffer
                                        (insert-file-contents-literally file)
-                                       (string-as-unibyte (buffer-string))) nil t))))
+                                       (encode-coding-string (buffer-string))) nil t))))
 
 (defun eimp-replace-text-property-sliced-image (file)
   "Replace text property image slices in region using contents of FILE."
   (let ((inhibit-read-only t)
         (image (create-image (with-temp-buffer
                                (insert-file-contents-literally file)
-                               (string-as-unibyte (buffer-string))) nil t))
+                               (encode-coding-string (buffer-string))) nil t))
         (image-prop (cdr (get-text-property (point) 'display))))
     ;; The slices could be anywhere; unfortunately this will replace
     ;; all slices for multiple copies of the same image.
@@ -543,7 +540,7 @@ Delete process if it doesn't"
     (put-text-property 0 (length before-string) 'display
                        (create-image (with-temp-buffer
                                        (insert-file-contents-literally file)
-                                       (string-as-unibyte (buffer-string))) nil t)
+                                       (encode-coding-string (buffer-string))) nil t)
                        before-string)))
 
 (defun eimp-update-buffer-contents ()
@@ -551,14 +548,14 @@ Delete process if it doesn't"
   (save-excursion
     (goto-char (point-min))
     (let ((inhibit-read-only t)
-          (data (string-as-unibyte (eimp-get-image-data))))
+          (data (encode-coding-string (eimp-get-image-data))))
       (if eimp-enable-undo
           (progn
             (erase-buffer)
             (insert data))
         (eimp-save-buffer-state nil
-          (erase-buffer)
-          (insert data))))
+				(erase-buffer)
+				(insert data))))
     (require 'image-mode)
     (image-toggle-display)
     ;; Return nil

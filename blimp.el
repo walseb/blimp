@@ -58,16 +58,7 @@
 ;;; Code:
 
 (require 'eimp)
-
-(defgroup blimp nil
-  "Bustling Image Manipulation Package."
-  :group 'tools
-  :link '(url-link "https://github.com/walseb/blimp"))
-
-(defcustom blimp-tutorial t
-  "Places (long) helpful examples in some prompts."
-  :group 'blimp
-  :type 'boolean)
+(require 'cl)
 
 (defvar blimp-command-stack (list)
   "List of unexecuted commands.")
@@ -574,14 +565,7 @@ and DESCRIPTION and puts it in the prompt."
   "Completing read with some hints on which format is relevant.
 It formats COMMAND, ARGUMENT,and DESCRIPTION
 and puts it in the prompt."
-  (let* ((format
-	  (if blimp-tutorial
-	      "1x1! & 1x1^ = preserve & ignore aspect ratio, 9@ = 9 pixel area, 4:3~ = 4:3 aspect ratio, +10+20 = offset by 10x20y"
-	    "x,y or 9@ or 4:3 or +10+20 etc")))
-    (let* ((collection
-	    (if blimp-tutorial
-		(list "100" "100x200" "200" "50%" "50x10%" "x10%") nil)))
-      (blimp-completing-read command argument collection format description))))
+  (blimp-completing-read command argument nil "X, XxY, xY, X%, XxY%, xY%, +X+Y (relative), X! / X^ / 4:3~ (perserve/ignore/select aspect ratio)" description))
 
 (defun blimp-find-file-completing-read (command argument description)
   "Read-file-name wrapper with correct formating.

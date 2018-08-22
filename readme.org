@@ -1,7 +1,8 @@
 * Blimp
 Blimp is a complete wrapper around all imagemagick commands with descriptions, autocompletion (for some commands) and hints displayed in prompt
 
-#+html: <img src="screenshot.png" alt="Blimp command building example"/>
+#+html: <img src="screenshot1.png" alt="Blimp command building example"/>
+#+html: <img src="screenshot2.png" alt="Blimp command building example"/>
 
 ** Features
 - Supports all imagemagick commands

@@ -321,8 +321,8 @@
 ;; Mode settings
 (defvar blimp-minor-mode-map
   (let ((map (make-keymap)))
-    (define-key map (kbd "C-c C-i") 'blimp-interface)
-    (define-key map (kbd "C-c C-I") 'blimp-interface-execute)
+    (define-key map (kbd "C-c C-o") 'blimp-interface)
+    (define-key map (kbd "C-c C-O") 'blimp-interface-execute)
     (define-key map (kbd "C-c C-e") 'blimp-execute-command-stack)
     (define-key map (kbd "C-c C-p") 'blimp-toggle-prefix)
     (define-key map (kbd "C-c C-r") 'blimp-clear-command-stack)
@@ -466,7 +466,11 @@ If COMMAND is nil, prompt user for which command should be executed."
    (if command
        (blimp-read-command command)
      (blimp-read-command
-      (completing-read "Choose command: " (blimp-get-all-commands))))))
+      (completing-read (concat "Choose command: "
+			       (if blimp-command-stack
+				   (concat  "(Queued commands: "
+					    (string-join blimp-command-stack " ") ") ")))
+		       (blimp-get-all-commands))))))
 
 ;;;###autoload
 (defun blimp-interface-execute (&optional command)
@@ -525,10 +529,7 @@ COLLECTION is added as autocompletion entries."
    (concat "(" blimp-current-prefix " prefix) " command " - " argument " : "
 	   (if (and input-format (not (string-empty-p input-format)))
 	       (concat "(format: " input-format ") "))
-	   "(info: " description ") "
-	   (if blimp-command-stack
-	       (concat  "(Queued commands: "
-			(string-join blimp-command-stack " ") ") ")))
+	   "(info: " description ") ")
    collection))
 
 (defun blimp-type-completing-read (command argument description)

@@ -26,17 +26,6 @@
 ;;
 ;; This is the core version of eimp.el, which is eimp.el with features
 ;; provided by the package blimp removed
-;;
-;; Switch the minor mode on programmatically with:
-;;
-;;     (eimp-mode 1)
-;;
-;; or toggle interactively with M-x eimp-mode RET.
-;;
-;; Switch the minor mode on for all image-mode buffers with:
-;;
-;;     (autoload 'eimp-mode "eimp" "Emacs Image Manipulation Package." t)
-;;     (add-hook 'image-mode-hook 'eimp-mode)
 
 ;;; Code:
 (require 'image-mode)
@@ -205,7 +194,7 @@ the image data."
             (when (and file (file-readable-p file))
               (with-temp-buffer
                 (insert-file-contents-literally file)
-                (encode-coding-string (buffer-string)))))))))
+                (encode-coding-string (buffer-string) 'no-conversion-multibyte))))))))
 
 (defun eimp-mogrify-image (args)
   "Transform image, passing ARGS to mogrify."
@@ -287,7 +276,7 @@ string).  Return the process, if any."
                      (args (cadr (member 'proc-args eimp-data)))
                      (image-type (cadr (member 'image-type eimp-data))))
                 (with-temp-file temp-file
-                  (insert (decode-coding-string image-data)))
+                  (insert (decode-coding-string image-data 'no-conversion-multibyte)))
                 (setq proc
                       (apply #'start-process id nil eimp-mogrify-program
                              ;; TODO: haven't understood why things
@@ -510,14 +499,16 @@ Delete process if it doesn't"
                        'display
                        (create-image (with-temp-buffer
                                        (insert-file-contents-literally file)
-                                       (encode-coding-string (buffer-string))) nil t))))
+                                       (encode-coding-string (buffer-string) 'no-conversion-multibyte))
+				     nil t))))
 
 (defun eimp-replace-text-property-sliced-image (file)
   "Replace text property image slices in region using contents of FILE."
   (let ((inhibit-read-only t)
         (image (create-image (with-temp-buffer
                                (insert-file-contents-literally file)
-                               (encode-coding-string (buffer-string))) nil t))
+                               (encode-coding-string (buffer-string) 'no-conversion-multibyte))
+			     nil t))
         (image-prop (cdr (get-text-property (point) 'display))))
     ;; The slices could be anywhere; unfortunately this will replace
     ;; all slices for multiple copies of the same image.
@@ -539,7 +530,8 @@ Delete process if it doesn't"
     (put-text-property 0 (length before-string) 'display
                        (create-image (with-temp-buffer
                                        (insert-file-contents-literally file)
-                                       (encode-coding-string (buffer-string))) nil t)
+                                       (encode-coding-string (buffer-string) 'no-conversion-multibyte))
+				     nil t)
                        before-string)))
 
 (defun eimp-update-buffer-contents ()
@@ -547,14 +539,14 @@ Delete process if it doesn't"
   (save-excursion
     (goto-char (point-min))
     (let ((inhibit-read-only t)
-          (data (encode-coding-string (eimp-get-image-data))))
+          (data (encode-coding-string (eimp-get-image-data) 'no-conversion-multibyte)))
       (if eimp-enable-undo
           (progn
             (erase-buffer)
             (insert data))
         (eimp-save-buffer-state nil
-				(erase-buffer)
-				(insert data))))
+	  (erase-buffer)
+	  (insert data))))
     (require 'image-mode)
     (image-toggle-display)
     ;; Return nil

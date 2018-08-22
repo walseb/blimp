@@ -268,7 +268,7 @@ string).  Return the process, if any."
         (let* ((posn (eimp-image-position-by-id id))
                (image-data (and posn (eimp-get-image-data posn))))
           (when posn
-            (eimp-check-for-zombie posn))
+            (eimp-check-for-zombie))
           (cond
            ((or (not posn) (not image-data))
             ;; Maybe the image was deleted, or the display property
@@ -300,15 +300,15 @@ string).  Return the process, if any."
                 (set-process-filter proc #'eimp-mogrify-process-filter)
                 (set-process-sentinel proc #'eimp-mogrify-process-sentinel)
                 (eimp-save-buffer-state nil
-					(put-text-property (point) (1+ (point)) 'eimp-proc
-							   `(proc ,proc
-								  image-type ,image-type
-								  temp-file ,temp-file))
-					(remove-text-properties (point) (1+ (point)) (list id))))))))))
+		  (put-text-property (point) (1+ (point)) 'eimp-proc
+				     `(proc ,proc
+					    image-type ,image-type
+					    temp-file ,temp-file))
+		  (remove-text-properties (point) (1+ (point)) (list id))))))))))
     proc))
 
-(defun eimp-check-for-zombie (posn)
-  "Check for zombie eimp-proc text property at POSN."
+(defun eimp-check-for-zombie ()
+  "Check for zombie eimp-proc text property."
   (let ((proc (cadr (member 'proc (get-text-property (point) 'eimp-proc)))))
     (when (and proc
                (not (member proc eimp-process-list)))
@@ -585,7 +585,6 @@ The aspect ratio is not preserved."
 With a prefix arg, ARG, don't preserve the aspect ratio."
   (interactive "P")
   (let* ((edges (window-inside-pixel-edges))
-         (width (- (nth 2 edges) (nth 0 edges)))
          (height (- (nth 3 edges) (nth 1 edges)))
          (image-size (image-size (eimp-get-image) t))
          (image-width (car image-size))
@@ -602,7 +601,6 @@ With a prefix arg, ARG, don't preserve the aspect ratio."
   (interactive "P")
   (let* ((edges (window-inside-pixel-edges))
          (width (- (nth 2 edges) (nth 0 edges)))
-         (height (- (nth 3 edges) (nth 1 edges)))
          (image-size (image-size (eimp-get-image) t))
          (image-width (car image-size))
          (image-height (cdr image-size)))
@@ -629,8 +627,7 @@ Argument EVENT is a mouse event."
   "Resize image with mouse.
 Argument EVENT is a mouse event; with non-nil PRESERVE-ASPECT,
 preserve the aspect ratio."
-  (let* ((window (posn-window (event-start event)))
-         (event-start (event-start event))
+  (let* ((event-start (event-start event))
          end
          message-log-max
          image-size image-width image-height
@@ -656,7 +653,7 @@ preserve the aspect ratio."
                  (setq event (read-event))
                  (or (mouse-movement-p event)
                      (memq (car-safe event) '(switch-frame select-window))))
-        
+          
           (if (memq (car-safe event) '(switch-frame select-window))
               nil
             (setq end (event-end event))

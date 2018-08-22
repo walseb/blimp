@@ -527,7 +527,7 @@ COLLECTION is added as autocompletion entries."
 	       (concat "(format: " input-format ") "))
 	   "(info: " description ") "
 	   (if blimp-command-stack
-	       (concat  "(Commands: "
+	       (concat  "(Queued commands: "
 			(string-join blimp-command-stack " ") ") ")))
    collection))
 

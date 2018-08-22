@@ -4,7 +4,7 @@
 
 ;; Author: Matthew P. Hodges <MPHodges@member.fsf.org>
 ;; URL: http://mph-emacs-pkgs.alioth.debian.org/EimpEl.html
-;; Version: 1.4.0
+;; Version: 1.4.1
 ;; Package-Requires: ((emacs "24"))
 ;; Keywords: multimedia, unix
 
@@ -41,7 +41,7 @@
 ;;; Code:
 (require 'image-mode)
 
-(defconst eimp-version "1.4.0"
+(defconst eimp-version "1.4.1"
   "Version number of this package.")
 
 ;; Customizable variables

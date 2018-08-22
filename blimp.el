@@ -321,11 +321,11 @@
 ;; Mode settings
 (defvar blimp-minor-mode-map
   (let ((map (make-keymap)))
-    (define-key map (kbd "C-c i") 'blimp-interface)
-    (define-key map (kbd "C-c I") 'blimp-interface-execute)
-    (define-key map (kbd "C-c r") 'blimp-execute-command-stack)
-    (define-key map (kbd "C-c p") 'blimp-toggle-prefix)
-    (define-key map (kbd "C-c c") 'blimp-clear-command-stack)
+    (define-key map (kbd "C-c C-i") 'blimp-interface)
+    (define-key map (kbd "C-c C-I") 'blimp-interface-execute)
+    (define-key map (kbd "C-c C-e") 'blimp-execute-command-stack)
+    (define-key map (kbd "C-c C-p") 'blimp-toggle-prefix)
+    (define-key map (kbd "C-c C-r") 'blimp-clear-command-stack)
     map)
   "Keymap for blimp mode.")
 

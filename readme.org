@@ -1,8 +1,7 @@
-* Blimp
-Blimp is a complete wrapper around all imagemagick commands with descriptions, autocompletion (for some commands) and hints displayed in prompt
+* Blimp - Bustling Image Manipulation Package
+Blimp is a complete wrapper around all imagemagick commands with descriptions, autocompletion (for some commands) and hints displayed in prompt using eimp.el to execute its commands and resize images.
 
-#+html: <img src="screenshot1.png" alt="Blimp command building example"/>
-#+html: <img src="screenshot2.png" alt="Blimp command building example"/>
+#+html: <img src="screenshot.png" alt="Blimp command building"/>
 
 ** Features
 - Supports all imagemagick commands
@@ -11,6 +10,7 @@ Blimp is a complete wrapper around all imagemagick commands with descriptions, a
 - Parameter autocomplete for some commands
 - Description of command in prompt
 - Description of input format for some commands
+- Resize images to fit window or manually using the mouse
 
 ** Install
 #+BEGIN_SRC emacs-lisp
@@ -20,6 +20,8 @@ Blimp is a complete wrapper around all imagemagick commands with descriptions, a
 
 ** Usage
 First enter a image-buffer and type =C-c C-i= to bring up the =blimp-interface=. After choosing a imagemagick command and its parameters, do =C-c C-e= to apply the chosen command(s) on the current image or =C-c C-r= to clear all queued commands. You can also do =C-c C-I= to apply the command right after selecting it and =C-c C-p= to toggle the current command prefix between "+" and "-".
+
+If you want to resize the current image to fit the buffer you have several alternatives: =M-x eimp-fit-image-height-to-window= or =M-x eimp-fit-image-to-whole-window= or =M-x eimp-fit-image-to-window= or =M-x eimp-fit-image-width-to-window=
 
 ** Configuration
 If you want to skip using =blimp-interface= and instead have hotkeys for specific commands you can do
@@ -41,4 +43,10 @@ Or if you want to run commands with all their paramaters already set
     (blimp-execute-command-stack))
 
   (define-key eimp-mode (kbd "C-c C-r") 'my/blimp-rotate-90)
+#+END_SRC
+
+To resize images using the mouse you can do
+#+BEGIN_SRC emacs-lisp
+  (define-key blimp-mode-map (kbd "<down-mouse-3>") 'eimp-mouse-resize-image-preserve-aspect)
+  (define-key blimp-mode-map (kbd "<down-mouse-2>") 'eimp-mouse-resize-image)
 #+END_SRC

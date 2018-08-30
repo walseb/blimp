@@ -3,7 +3,7 @@
 ;; Author: Sebastian Wålinder <s.walinder@gmail.com>
 ;; URL: https://github.com/walseb/blimp
 ;; Version: 1.0
-;; Package-Requires: ((emacs "25") (eimp "1.4.1"))
+;; Package-Requires: ((emacs "25") (eimp "1.4.0"))
 ;; Keywords: multimedia, unix
 
 ;; blimp.el is free software; you can redistribute it and/or modify it

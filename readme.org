@@ -1,5 +1,5 @@
-* Blimp - Bustling Image Manipulation Package
 [[https://melpa.org/#/blimp][file:https://melpa.org/packages/blimp-badge.svg]]
+* Blimp - Bustling Image Manipulation Package
 Blimp is a complete wrapper around all imagemagick commands with descriptions, autocompletion (for some commands) and hints displayed in prompt using eimp.el to execute its commands and resize images.
 
 #+html: <img src="screenshot.png" alt="Blimp command building"/>

@@ -20,10 +20,10 @@
 ;; along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;;
-;; This package is a wrapper around eimp.el and provides a complete UI
-;; around all possible imagemagick mogrify commands with a lot of
-;; commands also having autocompletion and hints
+;; This package is a complete wrapper around all imagemagick commands
+;; with descriptions, autocompletion (for some commands) and hints
+;; displayed in prompt using eimp.el to execute its commands and
+;; resize images.
 ;;
 
 ;;; Usage:

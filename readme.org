@@ -20,7 +20,7 @@ Blimp is a complete wrapper around all imagemagick commands with descriptions, a
 #+END_SRC
 
 ** Usage
-First enter a image-buffer and type =C-c C-i= to bring up the =blimp-interface=. After choosing a imagemagick command and its parameters, do =C-c C-e= to apply the chosen command(s) on the current image or =C-c C-r= to clear all queued commands. You can also do =C-c C-I= to apply the command right after selecting it and =C-c C-p= to toggle the current command prefix between "+" and "-".
+First enter a image-buffer and type =C-c C-o= to bring up the =blimp-interface=. After choosing a imagemagick command and its parameters, do =C-c C-e= to apply the chosen command(s) on the current image or =C-c C-r= to clear all queued commands. You can also do =C-c C-O= to apply the command right after selecting it and =C-c C-p= to toggle the current command prefix between "+" and "-".
 
 If you want to resize the current image to fit the buffer you have several alternatives: =M-x eimp-fit-image-height-to-window= or =M-x eimp-fit-image-to-whole-window= or =M-x eimp-fit-image-to-window= or =M-x eimp-fit-image-width-to-window=
 

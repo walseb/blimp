@@ -20,13 +20,11 @@
 ;; along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+
 ;; This package is a complete wrapper around all imagemagick commands
 ;; with descriptions, autocompletion (for some commands) and hints
 ;; displayed in prompt using eimp.el to execute its commands and
 ;; resize images.
-;;
-
-;;; Usage:
 ;;
 ;; Switch the blimp minor mode on programmatically with:
 ;;

@@ -51,6 +51,7 @@
 ;;; Code:
 
 (require 'eimp)
+(require 'cl)
 
 (defvar blimp-command-stack (list)
   "List of unexecuted commands.")

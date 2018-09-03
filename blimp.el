@@ -52,6 +52,7 @@
 
 (require 'eimp)
 (require 'subr-x)
+(require 'password-cache)
 
 (defvar blimp-command-stack (list)
   "List of unexecuted commands.")

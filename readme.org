@@ -32,7 +32,7 @@ If you want to skip using =blimp-interface= and instead have hotkeys for specifi
     (interactive)
     (blimp-interface-execute "rotate"))
 
-  (define-key eimp-mode (kbd "C-c C-r") 'my/blimp-rotate)
+  (define-key eimp-mode (kbd "C-c C-R") 'my/blimp-rotate)
 #+END_SRC
 
 Or if you want to run commands with all their paramaters already set
@@ -43,7 +43,7 @@ Or if you want to run commands with all their paramaters already set
     (blimp-add-to-command-stack (list "-rotate" "90"))
     (blimp-execute-command-stack))
 
-  (define-key eimp-mode (kbd "C-c C-r") 'my/blimp-rotate-90)
+  (define-key eimp-mode (kbd "C-c C-R") 'my/blimp-rotate-90)
 #+END_SRC
 
 To resize images using the mouse you can do

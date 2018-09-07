@@ -8,9 +8,9 @@ Blimp is a complete wrapper around all imagemagick commands with descriptions, a
 - Supports all imagemagick commands
 - Supports all completion frontends (ivy, helm, ido, etc)
 - Writes changes to buffer instead of file allowing you to revert changes before saving
+- Undo and redo image changes with =setq eimp-enable-undo t=
 - Parameter autocomplete for some commands
-- Description of command in prompt
-- Description of input format for some commands
+- Description of command and input format in prompt
 - Resize images to fit window or manually using the mouse
 
 ** Install

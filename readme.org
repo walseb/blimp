@@ -51,3 +51,6 @@ To resize images using the mouse you can do
   (define-key blimp-mode-map (kbd "<down-mouse-3>") 'eimp-mouse-resize-image-preserve-aspect)
   (define-key blimp-mode-map (kbd "<down-mouse-2>") 'eimp-mouse-resize-image)
 #+END_SRC
+
+*** Macros
+When using the above commands in macros to quickly modify a lot of images, keep in mind that eimp.el (and by extension =blimp-execute-command-stack=) is async, so you need to wait for the command stack to execute before switching image. To do this i just add =(sleep-for 0.2)= at the end of the script, e.g. at the end of =my/blimp-rotate-90=. More complex commands might require more time to execute so keep this in mind.

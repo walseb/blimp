@@ -5,7 +5,7 @@ Blimp is a complete wrapper around all imagemagick commands with descriptions, a
 #+html: <img src="screenshot.png" alt="Blimp command building"/>
 
 ** Features
-- Supports all imagemagick commands
+- Should support all documented imagemagick commands (as of Aug 2018)
 - Supports all completion frontends (ivy, helm, ido, etc)
 - Writes changes to buffer instead of file allowing you to revert changes before saving
 - Undo and redo image changes with =(setq eimp-enable-undo t)=
